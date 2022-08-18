@@ -1,0 +1,2 @@
+InvoiceNo,StockCode,Description,Quantity,InvoiceDate,UnitPrice,CustomerID,Country
+536524,22761,"TRAY, BREAKFAST IN BED",1,12/1/2010 14:32,25.49,,United Kingdom
