@@ -5,7 +5,7 @@ import com.lh.be.model.Invoice
 data class UploadResponse(
     val code: Int,
     val message: String,
-    val data : DocumentId
+    val data: DocumentId
 )
 
 data class DocumentId(
@@ -15,11 +15,11 @@ data class DocumentId(
 data class InvoiceInfoResponse(
     val code: Int,
     val message: String,
-    val data : InvoicesInfo
+    val data: InvoicesInfo
 )
 
-data class InvoicesInfo (
+data class InvoicesInfo(
     val rows: List<Invoice>,
     val totalPage: Int,
-    val count : Long
+    val count: Long
 )

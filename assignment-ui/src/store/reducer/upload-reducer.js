@@ -2,11 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api";
 
 const uploadThunk = createAsyncThunk('upload/uploadFile', async (file, thunkApi) => {
-    console.log('this is the file', file[0].name);
     const fileData = new FormData();
     fileData.append('file', file[0].raw);
     let { data } = await api.post('/uploadFile', fileData, {
-        headers:{"Content-Type": "multipart/form-data"}
+        headers: { "Content-Type": "multipart/form-data" }
     });
     return data;
 })
@@ -16,7 +15,7 @@ export const uploadReducer = createSlice({
         data: [],
         isLoading: false,
         loadingMessage: "",
-        fileId:""
+        fileId: ""
     },
     reducers: {
         setFileId(state, { payload }) {
@@ -29,13 +28,11 @@ export const uploadReducer = createSlice({
             state.loadingMessage = "Your file is being uploaded and processed. Please do not close your browser."
         },
         [uploadThunk.fulfilled]: (state, { payload }) => {
-            console.log('this is the payload', payload);
             state.isLoading = false;
             state.fileId = payload.data.documentId
             state.loadingMessage = "";
         },
-        [uploadThunk.rejected]: (state, { payload }) => {
-            console.log('this is the payload', payload);
+        [uploadThunk.rejected]: (state, {}) => {
             state.isLoading = false;
             state.loadingMessage = "";
         }

@@ -24,69 +24,70 @@ import java.nio.file.Paths
 @SpringBootTest
 @AutoConfigureMockMvc
 
-class BeApplicationTests (
-	@Autowired val mockMvc: MockMvc,
-	@Autowired val objectMapper: ObjectMapper
+class BeApplicationTests(
+    @Autowired val mockMvc: MockMvc,
+    @Autowired val objectMapper: ObjectMapper
 ) {
-	companion object {
-		@JvmField
-		var testId: String = ""
-	}
-	@Test
-	fun uploadFilesThrowBadRequestIfFileNotCsv() {
-		val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.txt"));
-		mockMvc.perform(multipart("${Constant.apiPrefix}/uploadFile").file("file", byteArr))
-			.andExpect(status().isBadRequest());
-	}
+    companion object {
+        @JvmField
+        var testId: String = ""
+    }
 
-	@Test
-	fun uploadFilesSucceed() {
-		val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.csv"));
-		val sampleFile = MockMultipartFile("file","mock.csv", "text/csv",byteArr);
-		val multipartRequest = MockMvcRequestBuilders.multipart("${Constant.apiPrefix}/uploadFile");
-		val result = mockMvc.perform(multipartRequest.file(sampleFile))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.documentId").exists())
-			.andReturn();
-		val parsedObject = Gson().fromJson(result.response.contentAsString, UploadResponse::class.java);
-		testId = parsedObject.data.documentId;
-	}
+    @Test
+    fun uploadFilesThrowBadRequestIfFileNotCsv() {
+        val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.txt"));
+        mockMvc.perform(multipart("${Constant.apiPrefix}/uploadFile").file("file", byteArr))
+            .andExpect(status().isBadRequest());
+    }
 
-	@Test
-	fun getFileByIdWithoutQuery() {
-		setup();
-		mockMvc.get("${Constant.apiPrefix}/file/${testId}?page=0")
-						.andExpect {
-							status { isOk() }
-							jsonPath("$.data.count").equals(3)
-							jsonPath("$.data.totalPage").equals(1)
-						}
-	}
+    @Test
+    fun uploadFilesSucceed() {
+        val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.csv"));
+        val sampleFile = MockMultipartFile("file", "mock.csv", "text/csv", byteArr);
+        val multipartRequest = MockMvcRequestBuilders.multipart("${Constant.apiPrefix}/uploadFile");
+        val result = mockMvc.perform(multipartRequest.file(sampleFile))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.documentId").exists())
+            .andReturn();
+        val parsedObject = Gson().fromJson(result.response.contentAsString, UploadResponse::class.java);
+        testId = parsedObject.data.documentId;
+    }
 
-	@Test
-	fun deleteFileByIdSuccess() {
-		setup()
-		mockMvc.delete("${Constant.apiPrefix}/delete/${testId}")
-			.andExpect {
-				status { isOk() }
-			}
-	}
+    @Test
+    fun getFileByIdWithoutQuery() {
+        setup();
+        mockMvc.get("${Constant.apiPrefix}/file/${testId}?page=0")
+            .andExpect {
+                status { isOk() }
+                jsonPath("$.data.count").equals(3)
+                jsonPath("$.data.totalPage").equals(1)
+            }
+    }
 
-	@AfterEach
-	fun deleteFileUploaded() {
-		if(testId != "") {
-			deleteFileByIdSuccess();
-		}
-	}
+    @Test
+    fun deleteFileByIdSuccess() {
+        setup()
+        mockMvc.delete("${Constant.apiPrefix}/delete/${testId}")
+            .andExpect {
+                status { isOk() }
+            }
+    }
 
-	fun setup() {
-		val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.csv"));
-		val sampleFile = MockMultipartFile("file","mock.csv", "text/csv",byteArr);
-		val multipartRequest = MockMvcRequestBuilders.multipart("${Constant.apiPrefix}/uploadFile");
-		val result = mockMvc.perform(multipartRequest.file(sampleFile))
-			.andReturn();
-		val parsedObject = Gson().fromJson(result.response.contentAsString, UploadResponse::class.java);
-		testId = parsedObject.data.documentId;
-	}
+    @AfterEach
+    fun deleteFileUploaded() {
+        if (testId != "") {
+            deleteFileByIdSuccess();
+        }
+    }
+
+    fun setup() {
+        val byteArr = Files.readAllBytes(Paths.get("./src/test/kotlin/com/lh/be/mockData/mock.csv"));
+        val sampleFile = MockMultipartFile("file", "mock.csv", "text/csv", byteArr);
+        val multipartRequest = MockMvcRequestBuilders.multipart("${Constant.apiPrefix}/uploadFile");
+        val result = mockMvc.perform(multipartRequest.file(sampleFile))
+            .andReturn();
+        val parsedObject = Gson().fromJson(result.response.contentAsString, UploadResponse::class.java);
+        testId = parsedObject.data.documentId;
+    }
 
 }

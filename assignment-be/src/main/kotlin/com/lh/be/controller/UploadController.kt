@@ -20,57 +20,71 @@ import java.util.Optional
 
 
 @RestController
-class UploadController @Autowired constructor(private val invoiceRepository: InvoiceRepository)  {
+class UploadController @Autowired constructor(private val invoiceRepository: InvoiceRepository) {
 
     private val defaultResponse: Response = Response(200, "successfully uploaded");
-    private var currentPage: Int =0;
+    private var currentPage: Int = 0;
 
     @CrossOrigin(origins = ["http://localhost:3000"])
     @PostMapping("${Constant.apiPrefix}/uploadFile")
-    fun uploadFiles(@RequestPart("file") file:MultipartFile) : ResponseEntity<UploadResponse> {
-        val processedFile : File = File(file.originalFilename);
-        if(processedFile.extension != "csv") {
+    fun uploadFiles(@RequestPart("file") file: MultipartFile): ResponseEntity<UploadResponse> {
+        val processedFile: File = File(file.originalFilename);
+        if (processedFile.extension != "csv") {
             throw FileExtensionException();
         }
         val inputStream: InputStream = file.inputStream;
         val parsedCsv = readCsv(inputStream);
-        println("this is parsedCsv ${parsedCsv}");
         invoiceRepository.saveAll(parsedCsv);
-        return ResponseEntity( UploadResponse(200,
-            "Successfully Uploaded",
-            DocumentId(parsedCsv[0].documentId)
-        ), HttpStatus.OK);
+        return ResponseEntity(
+            UploadResponse(
+                200,
+                "Successfully Uploaded",
+                DocumentId(parsedCsv[0].documentId)
+            ), HttpStatus.OK
+        );
     }
 
     @CrossOrigin(origins = ["http://localhost:3000"])
     @GetMapping("${Constant.apiPrefix}/file/{documentId}")
     @ResponseStatus(HttpStatus.OK)
-    fun getFileById(@PathVariable(name ="documentId") documentId: String, @RequestParam(name ="page") page: String, @RequestParam(name="query") query: Optional<String>): InvoiceInfoResponse {
-        var result : Page<Invoice>;
-        if(!query.isPresent) {
-            result = invoiceRepository.getInvoicesByDocumentId(documentId, PageRequest.of(page.toInt(), Constant.recordsPerPage));
-        }
-        else {
+    fun getFileById(
+        @PathVariable(name = "documentId") documentId: String,
+        @RequestParam(name = "page") page: String,
+        @RequestParam(name = "query") query: Optional<String>
+    ): InvoiceInfoResponse {
+        var result: Page<Invoice>;
+        if (!query.isPresent) {
+            result = invoiceRepository.getInvoicesByDocumentId(
+                documentId,
+                PageRequest.of(page.toInt(), Constant.recordsPerPage)
+            );
+        } else {
             val queryString = "${query.get()}"
-            result = invoiceRepository.getInvoiceByColumn(documentId, queryString, PageRequest.of(page.toInt(), Constant.recordsPerPage));
+            result = invoiceRepository.getInvoiceByColumn(
+                documentId,
+                queryString,
+                PageRequest.of(page.toInt(), Constant.recordsPerPage)
+            );
         }
-        println("${result.totalElements}, ${page}" );
-
-        return InvoiceInfoResponse(200,"success", InvoicesInfo(result.toList(), result.totalPages, result.totalElements) );
+        return InvoiceInfoResponse(
+            200,
+            "success",
+            InvoicesInfo(result.toList(), result.totalPages, result.totalElements)
+        );
     }
 
     @DeleteMapping("${Constant.apiPrefix}/deleteAllUploadedFile")
     @ResponseStatus(HttpStatus.OK)
     fun deleteAllUploadedFile(): Response {
         invoiceRepository.deleteAll();
-        return Response(200,"success");
+        return Response(200, "success");
     }
+
     @DeleteMapping("${Constant.apiPrefix}/delete/{documentId}")
     @ResponseStatus(HttpStatus.OK)
-    fun deleteFileById(@PathVariable(name ="documentId") documentId: String): Response {
+    fun deleteFileById(@PathVariable(name = "documentId") documentId: String): Response {
         val deletedInvoices = invoiceRepository.deleteByDocumentId(documentId);
-        println(deletedInvoices);
-        return Response(200,"success");
+        return Response(200, "success");
     }
 
     fun readCsv(inputStream: InputStream): List<Invoice> {
@@ -80,21 +94,21 @@ class UploadController @Autowired constructor(private val invoiceRepository: Inv
         return reader.lineSequence()
             .filter { it.isNotBlank() }
             .map {
-               // println("this is it ${it}");
+                // println("this is it ${it}");
                 var index = 0;
-                val row : MutableList<String> = mutableListOf<String>();
-                var mutatedString : String = it;
-                while(index < 7) {
-                    if(index <2) {
-                        val splitedString = mutatedString.split(",", ignoreCase = false,limit = 2);
+                val row: MutableList<String> = mutableListOf<String>();
+                var mutatedString: String = it;
+                while (index < 7) {
+                    if (index < 2) {
+                        val splitedString = mutatedString.split(",", ignoreCase = false, limit = 2);
                         row.add(splitedString[0]);
                         mutatedString = splitedString[1];
-                    }else {
+                    } else {
                         // println("this is the mutated string and array ${row} , ${mutatedString}");
                         val lastCommaIndex = mutatedString.lastIndexOf(",");
-                        row.add(mutatedString.substring(lastCommaIndex+1));
-                        mutatedString = mutatedString.substring(0,lastCommaIndex);
-                        if(index == 6) {
+                        row.add(mutatedString.substring(lastCommaIndex + 1));
+                        mutatedString = mutatedString.substring(0, lastCommaIndex);
+                        if (index == 6) {
                             row.add(mutatedString);
                         }
                     }
@@ -108,7 +122,7 @@ class UploadController @Autowired constructor(private val invoiceRepository: Inv
                     row[7],
                     row[6],
                     row[5],
-                    row[4] ,
+                    row[4],
                     row[3],
                     row[2],
                     documentId

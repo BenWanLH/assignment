@@ -15,12 +15,12 @@ export default function UploadPage() {
     const invoices = useSelector((state) => state.file.invoices);
     const totalPage = useSelector((state) => state.file.totalPage);
     const currentPage = useSelector((state) => state.file.currentPage);
+    const emptyText = "No Data Available"
 
     let { id } = useParams();
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log('id changed', id, currentPage);
         dispatch(fileActions.getInvoiceById({ fileId: id }));
     }, [id, dispatch])
 
@@ -30,7 +30,6 @@ export default function UploadPage() {
     }
 
     const onInputChange = debounce((event) => {
-        console.log(event);
         dispatch(fileActions.setCurrentPage(1));
         dispatch(fileActions.setQuery(event));
         dispatch(fileActions.getInvoiceById({ fileId: id }));
@@ -48,7 +47,7 @@ export default function UploadPage() {
                 style={{ width: '100%' }}
                 columns={tableCol}
                 data={invoices}
-                emptyText={"No Data Available"}
+                emptyText={emptyText}
             />
             <div>
                 <Pagination

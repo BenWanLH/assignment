@@ -8,5 +8,5 @@ import org.springframework.boot.runApplication
 class BeApplication
 
 fun main(args: Array<String>) {
-	runApplication<BeApplication>(*args)
+    runApplication<BeApplication>(*args)
 }

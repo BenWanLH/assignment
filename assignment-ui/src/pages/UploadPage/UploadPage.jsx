@@ -22,14 +22,8 @@ function UploadPage() {
             }
         }, [fileId, dispatch, history])
         
-        const submitUpload = (response, file, fileList) => {
+        const submitUpload = () => {
             dispatch(uploadActions.upload(uploadRef.current.state.fileList));
-        }
-        const handleRemove = (file, fileList) => {
-            console.log('the file and fileList', file, fileList);
-        }
-        const handleExceed = (files, fileList) => {
-            console.log('this is newFile', files);
         }
 
         return (
@@ -41,8 +35,6 @@ function UploadPage() {
                     accept={".csv"}
                     multiple={false}
                     limit={1}
-                    onRemove={(file, fileList) => handleRemove(file, fileList)}
-                    onExceed={(files, fileList) => handleExceed(files, fileList)}
                     autoUpload={false}
                     tip={<div className="el-upload__tip">only CSV files allowed</div>}
                     trigger={<Button size="small" type="primary">select file</Button>}
