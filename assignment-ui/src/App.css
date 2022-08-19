@@ -1,5 +1,6 @@
-.loader {
-  position: unset !important;
+.loading-message {
+  color:white;
+  padding-left:16px;
 }
 
 .p-24 {
@@ -7,4 +8,19 @@
 }
 .pb-8 {
   padding-bottom:8px;
+}
+
+.pbt-8 {
+  padding: 8px 0;
+}
+
+.mr-8 {
+  margin-right: 8px !important;
+}
+.ml-8 {
+  margin-left: 8px !important;
+}
+
+.d-none {
+  display:none;
 }

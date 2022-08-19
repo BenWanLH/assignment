@@ -1,4 +1,8 @@
-const tableCol = [
+export interface TableColumn {
+    label: String,
+    prop: String
+}
+const tableCol : TableColumn[] = [
     {
         label:"Invoice No",
         prop: "invoiceNo"

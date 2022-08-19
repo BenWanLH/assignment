@@ -1,9 +1,36 @@
-.upload-page{
-    position: absolute; 
+.upload-page {
+    position: absolute;
     top: 50%;
-    left:50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    .upload-demo{
+
+    .upload-demo {
         text-align: center;
+    }
+
+    &__label {
+        text-align: center;
+        color: grey;
+    }
+
+    .filename {
+        display: flex;
+        align-items: center;
+        background-color: #f5f7fa;
+        padding-bottom: 4px;
+
+        &__delete-btn {
+            padding-right: 4px;
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        &__label {
+            padding-left: 8px;
+        }
+    }
+
+    &__btn {
+        text-transform: none !important;
     }
 }
