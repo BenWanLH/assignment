@@ -28,7 +28,6 @@ function UploadPage() {
     }
 
     const onInputChange = (event: React.FormEvent<HTMLInputElement>) => {
-        console.log(event);
         if (inputRef && inputRef.files) {
             dispatch(uploadActions.setFile(inputRef.files[0]));
         }

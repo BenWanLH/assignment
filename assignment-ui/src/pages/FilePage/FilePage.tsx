@@ -19,7 +19,7 @@ import Paper from "@mui/material/Paper";
 
 
 
-export default function UploadPage() {
+export default function FilePage() {
     const invoices = useAppSelector((state) => state.file.invoices);
     const currentPage = useAppSelector((state) => state.file.currentPage);
     const totalInvoices = useAppSelector((state) => state.file.totalInvoices);
